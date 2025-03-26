@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreens extends StatelessWidget {
@@ -6,12 +7,33 @@ class ChatScreens extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) => Container(
-          padding: EdgeInsets.all(10),
-          child: Text('What\'s up'),
-        )
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('chat').doc('n9jz6PIkpQ8ufjjYuAUl').collection('messages').snapshots(), 
+        builder: (context, streamSnapshot) {
+          if (streamSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final documents = streamSnapshot.data!.docs;
+          return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (context, index) => Container(
+              margin: EdgeInsets.all(10),
+              child: Text(documents[index]['message']),
+            )
+          );
+        }
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          FirebaseFirestore.instance.collection('chat/n9jz6PIkpQ8ufjjYuAUl')
+          .snapshots()
+          .listen((data) {
+            data.docs.forEach((document) {
+              print(document['text']);
+            });
+          });
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
