@@ -25,12 +25,8 @@ class ChatScreens extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          FirebaseFirestore.instance.collection('chat/n9jz6PIkpQ8ufjjYuAUl')
-          .snapshots()
-          .listen((data) {
-            data.docs.forEach((document) {
-              print(document['text']);
-            });
+          FirebaseFirestore.instance.collection('chat').doc('n9jz6PIkpQ8ufjjYuAUl').collection('messages').add({
+            'text': 'Hello World'
           });
         },
         child: Icon(Icons.add),
